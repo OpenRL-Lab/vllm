@@ -1,0 +1,20 @@
+# 使用 vllm-openai:last 作为基础镜像
+FROM harbor.4pd.io/env/vllm/vllm-openai:latest
+
+# 设定工作目录
+WORKDIR /workspace
+
+# 将本地的 FastChat 文件夹拷贝到容器的 /workspace 目录下
+COPY FastChat /workspace/FastChat
+COPY vllm/blue_vllm/vllm/vllm /workspace/vllm
+
+# 安装 FastChat 文件夹中的 Python 包
+# 使用指定的 pip 源并加入额外的镜像源
+RUN pip install /workspace/FastChat \
+    -i https://nexus.4pd.io/repository/pypi-all/simple \
+    --trusted-host nexus.4pd.io \
+    --extra-index-url https://mirrors.aliyun.com/pypi/simple/
+
+
+# 保持原 Docker 镜像的 ENTRYPOINT 不变
+ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
