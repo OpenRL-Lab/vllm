@@ -1,0 +1,11 @@
+# 使用 vllm-openai:last 作为基础镜像
+#FROM harbor.4pd.io/env/vllm/vllm-openai:latest
+FROM vllm/vllm-openai:latest
+
+# 设定工作目录
+WORKDIR /workspace
+
+COPY vllm/orion_vllm /workspace/vllm
+
+# 保持原 Docker 镜像的 ENTRYPOINT 不变
+ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
