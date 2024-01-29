@@ -1,0 +1,13 @@
+# 使用 vllm-openai:last 作为基础镜像
+FROM harbor.4pd.io/lab-platform/env/vllm/vllm-openai:latest
+
+COPY vllm/vllm /workspace/vllm
+COPY vllm/internlm2_vllm /workspace/vllm
+
+RUN pip install --upgrade einops pydantic \
+    -i https://nexus.4pd.io/repository/pypi-all/simple \
+    --trusted-host nexus.4pd.io \
+    --extra-index-url https://mirrors.aliyun.com/pypi/simple/
+
+# 保持原 Docker 镜像的 ENTRYPOINT 不变
+ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
