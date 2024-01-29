@@ -1,0 +1,14 @@
+# 使用 vllm-openai:last 作为基础镜像
+FROM harbor.4pd.io/env/vllm/vllm-openai:latest
+#FROM vllm/vllm-openai:latest
+
+# 设定工作目录
+WORKDIR /workspace
+
+RUN pip install --upgrade tiktoken \
+    -i https://nexus.4pd.io/repository/pypi-all/simple \
+    --trusted-host nexus.4pd.io \
+    --extra-index-url https://mirrors.aliyun.com/pypi/simple/
+
+# 保持原 Docker 镜像的 ENTRYPOINT 不变
+ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
